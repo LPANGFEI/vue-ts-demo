@@ -1,6 +1,6 @@
 <template>
 	<div class="about">
-		<h1>测试Vuex</h1>
+		<el-button type="primary" @click="handleClick">测试请求</el-button>
 		<div :class="className">
 			<el-table :data="userData" stripe border fit>
 				<el-table-column v-for="item in userHeader" :key="item.id" :prop="item.prop" :label="item.label" show-overflow-tooltip align="center"></el-table-column>
@@ -11,15 +11,16 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { State } from 'vuex-class';
-
-interface userHeader {
-	label: string;
-	prop: string;
-}
+import { Mutation } from 'vuex-class';
+import { SET_USER } from '@/store/mutation-types';
+import { getUser } from '@/api/Test/index';
+import { userHeader } from './interface';
 
 @Component
-export default class About extends Vue {
+export default class Test extends Vue {
+	@Mutation(SET_USER) SET_USER: any;
+
+	private userData: any[] = [];
 	private userHeader: userHeader[] = [
 		{ label: 'name', prop: 'name' },
 		{ label: 'username', prop: 'username' },
@@ -28,10 +29,17 @@ export default class About extends Vue {
 		{ label: 'website', prop: 'website' }
 	];
 
-	@State('userData') userData!: any[];
-
 	get className() {
 		return 'w-50 flex j-center a-center m-auto mt-3';
+	}
+
+	async handleClick() {
+		const res: any = await getUser();
+		const { status, data } = res;
+		if (status === 200) {
+			this.userData = data;
+			this.SET_USER(this.userData);
+		}
 	}
 }
 </script>

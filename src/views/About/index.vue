@@ -13,10 +13,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 
-interface userHeader {
-	label: string;
-	prop: string;
-}
+import { userHeader } from './interface';
 
 @Component
 export default class About extends Vue {

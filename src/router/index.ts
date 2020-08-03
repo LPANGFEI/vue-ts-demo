@@ -1,29 +1,47 @@
-import Vue from 'vue'
-import VueRouter, { RouteConfig } from 'vue-router'
-import Home from '../views/Home.vue'
+import Vue from 'vue';
+import VueRouter, { RouteConfig } from 'vue-router';
+// import jwtDecode from 'jwt-decode';
 
-Vue.use(VueRouter)
+import routes from './routes';
+import hasPermission from '../utils/hasPermission';
 
-  const routes: Array<RouteConfig> = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home
-  },
-  {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  }
-]
+Vue.use(VueRouter);
 
 const router = new VueRouter({
-  mode: 'history',
-  base: process.env.BASE_URL,
-  routes
-})
+	routes,
+	// mode: 'history',
+	base: process.env.BASE_URL
+});
 
-export default router
+router.beforeEach((to: any, form: any, next: any) => {
+	// const isLogin: boolean = localStorage.tsToken ? true : false;
+	// meta标识的路由需要登陆token
+	if (to.meta.requireAuth) {
+		// // 是否登陆有token
+		// if (isLogin) {
+		// 	const decoded: any = jwtDecode(localStorage.tsToken);
+		// 	const { key } = decoded;
+		// 	// 权限判断
+		// 	if (hasPermission(key, to)) {
+		// 		next();
+		// 	} else {
+		// 		// 没有权限
+		// 		next('/404');
+		// 	}
+		// } else {
+		// 	// 返回登陆
+		// 	next({
+		// 		path: '/login',
+		// 		// 将跳转的路由path作为参数，登录成功后跳转重定向到该路由
+		// 		query: {
+		// 			redirect: to.fullPath
+		// 		}
+		// 	});
+		// }
+	} else {
+		// 其他可登录
+		next();
+	}
+});
+
+export default router;
